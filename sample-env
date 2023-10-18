@@ -1,0 +1,15 @@
+# Port for incoming communication
+SMESH_PORT=7513
+
+# Port for API communication
+SMESH_JSON_PORT=9090
+
+# Data directory for spacemesh
+# (leave empty for default docker volume)
+SMESH_HOST_DATA_PATH=./data
+
+NODE_PACKAGE="nodejs=18.18.0-1nodesource1"
+NODE_MAJOR_VERSION=18
+
+# Edit this to reflect the latest Smapp version!
+SMAPP_VERSION=v1.2.4

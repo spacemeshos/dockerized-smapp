@@ -1,0 +1,47 @@
+version: '3.7'
+services:
+  smapp:
+    #     image: talm0/spacemesh-smapp-xpra:${SMAPP_VERSION:-latest}
+     build: 
+        context: .
+        args: 
+          SMAPP_VERSION: ${SMAPP_VERSION:-master}
+          NODE_PACKAGE: ${NODE_PACKAGE:-nodejs}
+          NODE_MAJOR_VERSION: ${NODE_MAJOR_VERSION:-18}
+     container_name: smapp
+     deploy:
+       resources:
+         reservations:
+            devices:
+              - driver: nvidia
+                count: all
+                capabilities: [gpu]
+     command: [ 'start',
+                '--env=XDG_RUNTIME_DIR=/tmp',
+                '--daemon=no',
+                '--pulseaudio=no',
+                '--dbus-launch=no',
+                '--opengl=no',
+                '--start-child=no-sandbox-smapp',
+                '--exit-with-children',
+                '--bind-tcp=0.0.0.0:9999' ]
+     ports:
+        - '127.0.0.1:6070:9999'
+        - "127.0.0.1:${SMESH_PORT:-7513}:${SMESH_PORT:-7513}"
+        - "127.0.0.1:${SMESH_JSON_PORT:-9090}:9090"
+     networks:
+       smapp: {}
+       
+     volumes:
+        - "${SMESH_HOST_DATA_PATH:-smesh-data}:/home/spacemesh"
+
+
+volumes:
+  smesh-data:
+        
+# Specify network interface name to make firewall rules easier.
+networks:
+  smapp:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: "docker-smapp"
